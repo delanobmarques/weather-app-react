@@ -7,16 +7,17 @@ function App() {
   const [location, setLocation] = useState('');
 
   const apiKey = '703b15535a185358863d02177a02f25b';
-  const url = `https://api.openweathermap.org/data/2.5/weather?q={${location}}&appid{${apiKey}}`;
-
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=imperial&APPID=${apiKey}`;
+  
   const searchLocation = (event) => {
-    if(event.key === 'Enter'){
+    if (event.key === 'Enter') {
       axios.get(url).then((response) => {
         setData(response.data);
         console.log(response.data);
+        console.log(location);
       })
-      setLocation()
-    }    
+      setLocation('')
+    }
   }
   
   return (
@@ -33,11 +34,22 @@ function App() {
       <div className="container">
         <div className="top">
           <div className="location">
-            <p>{data.name}</p>
+            <p>{data.name}/{data.sys.country}</p>
           </div>
-          <div className="temp">
-            {data.main ? <h1>{data.main.temp}ºF</h1> : null}
+          <div className="temp">            
+            {
+              data.main ? 
+                <span>
+                  <h1>
+                    {data.main.temp.toFixed()}ºF/
+                    {((data.main.temp-32)/1.8).toFixed()}ºC
+                  </h1>
+                </span>
+                :
+                null
+            }
           </div>
+
           <div className="description">
             {data.weather ? <p>{data.weather[0].main}</p> : null}    
           </div>
@@ -46,7 +58,17 @@ function App() {
         {data.name !== undefined && 
           <div className="bottom">
           <div className="feels">
-            {data.main ? <p className="bold">{data.main.feels_like}ºF</p> : null}
+            {
+              data.main ? 
+                <span>
+                  <p className="bold">
+                    {data.main.feels_like.toFixed()}ºF/ 
+                    {((data.main.feels_like-32)/1.8).toFixed()}ºC
+                  </p>
+                </span>
+                :
+                null
+            }
             <p>Feels Like</p>
           </div>          
           <div className="humidity">
